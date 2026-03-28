@@ -1,0 +1,64 @@
+[
+  {
+    "type": "body_line",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "ignore_rest",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "rest",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "source",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "body_line",
+          "named": true
+        },
+        {
+          "type": "ignore_rest",
+          "named": true
+        },
+        {
+          "type": "subject",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "subject",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "JJ: ignore-rest",
+    "named": false
+  },
+  {
+    "type": "comment",
+    "named": true,
+    "extra": true
+  },
+  {
+    "type": "rest",
+    "named": true
+  }
+]
