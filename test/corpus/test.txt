@@ -94,3 +94,172 @@ baz
   (body_line)
   (ignore_rest
     (rest)))
+
+================================================================================
+Subject prefix
+================================================================================
+
+JJ: describe this change
+feat(some change): this is a change
+
+These are some lines
+that describe the
+above change.
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject
+    (prefix
+      (type)
+      (scope)))
+  (body_line)
+  (body_line)
+  (body_line))
+
+================================================================================
+Subject prefix unicode
+================================================================================
+
+JJ: describe this change
+feat(some change)：this is a change
+
+These are some lines
+that describe the
+above change.
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject
+    (prefix
+      (type)
+      (scope)))
+  (body_line)
+  (body_line)
+  (body_line))
+
+================================================================================
+Subject prefix no scope
+================================================================================
+
+JJ: describe this change
+feat: this is a change
+
+These are some lines
+that describe the
+above change.
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject
+    (prefix
+      (type)))
+  (body_line)
+  (body_line)
+  (body_line))
+
+================================================================================
+Subject prefix unicode no scope
+================================================================================
+
+JJ: describe this change
+feat：this is a change
+
+These are some lines
+that describe the
+above change.
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject
+    (prefix
+      (type)))
+  (body_line)
+  (body_line)
+  (body_line))
+
+================================================================================
+Subject prefix breaking
+================================================================================
+
+JJ: describe this change
+JJ(foo)!: this is a breaking change
+
+These are some lines
+that describe the
+above change.
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject
+    (prefix
+      (type)
+      (scope)))
+  (body_line)
+  (body_line)
+  (body_line))
+
+================================================================================
+Subject prefix no scope breaking
+================================================================================
+
+JJ: describe this change
+JJ!: this is a breaking change
+
+These are some lines
+that describe the
+above change.
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject
+    (prefix
+      (type)))
+  (body_line)
+  (body_line)
+  (body_line))
+
+================================================================================
+Subject prefix empty
+================================================================================
+
+JJ: describe this change
+feat(fo):
+
+These are some lines
+that describe the
+above change.
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject)
+  (body_line)
+  (body_line)
+  (body_line))
+
+================================================================================
+Subject prefix empty with whitespace
+================================================================================
+
+JJ: describe this change
+feat: 
+
+These are some lines
+that describe the
+above change.
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject
+    (prefix
+      (type)))
+  (body_line)
+  (body_line)
+  (body_line))

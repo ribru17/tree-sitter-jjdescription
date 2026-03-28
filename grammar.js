@@ -9,12 +9,13 @@
 
 const NEWLINE = /\r?\n/;
 const ANYTHING = /[^\r\n]+/;
-const CHANGE_ID = /[k-z]+/;
 
 module.exports = grammar({
   name: 'jjdescription',
 
   extras: ($) => [NEWLINE, $.comment],
+
+  externals: ($) => [$.type, $._error_sentinel],
 
   rules: {
     source: ($) =>
@@ -24,24 +25,30 @@ module.exports = grammar({
           choice(
             $.body_line,
             $.ignore_rest,
-            // $.generated_comment,
           ),
         ),
       ),
 
-    // generated_comment: ($) =>
-    //   seq(
-    //     'JJ: Change ID: ',
-    //     $.change_id,
-    //     // CHANGE_ID,
-    //     NEWLINE,
-    //   ),
-
-    change_id: (_) => token.immediate(CHANGE_ID),
-
     comment: (_) => token(seq('JJ:', optional(ANYTHING))),
 
-    subject: (_) => prec(1, ANYTHING),
+    subject: ($) =>
+      prec.right(
+        1,
+        choice(
+          seq($.prefix, optional(ANYTHING)),
+          ANYTHING,
+        ),
+      ),
+
+    prefix: ($) =>
+      seq(
+        $.type,
+        optional(seq('(', $.scope, ')')),
+        optional('!'),
+        alias(/[:\uff1a]/, ':'),
+      ),
+
+    scope: (_) => /[^\r\n()]+/,
 
     body_line: (_) => ANYTHING,
 
