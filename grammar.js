@@ -16,7 +16,6 @@ module.exports = grammar({
   extras: ($) => [NEWLINE, $.comment],
 
   externals: ($) => [$.type, $._change_id, $._diff_summary, $._error_sentinel],
-  // externals: ($) => [$.type, $._error_sentinel],
 
   rules: {
     source: ($) =>
