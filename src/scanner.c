@@ -2,7 +2,14 @@
 #include <tree_sitter/parser.h>
 #include <wctype.h>
 
-enum TokenType { PREFIX_TYPE, CHANGE_ID, DIFF_SUMMARY, ERROR_SENTINEL };
+enum TokenType {
+    PREFIX_TYPE,
+    CHANGE_ID,
+    DIFF_SUMMARY,
+    JJ,
+    IGNORE_REST,
+    ERROR_SENTINEL
+};
 
 void *tree_sitter_jjdescription_external_scanner_create() {
     return NULL;
@@ -27,70 +34,9 @@ bool tree_sitter_jjdescription_external_scanner_scan(
         return false;
     }
 
-    if (valid_symbols[PREFIX_TYPE]) {
-        lexer->result_symbol = PREFIX_TYPE;
-        int js = 0;
-        if (iswcntrl(lexer->lookahead) || iswspace(lexer->lookahead) ||
-            lexer->lookahead == ':' || lexer->lookahead == '!' ||
-            lexer->lookahead == 0xFF1A || lexer->eof(lexer)) {
-            return false;
-        }
-        if (lexer->lookahead == 'J') {
-            js++;
-        }
-        lexer->advance(lexer, false);
-
-        while (!iswcntrl(lexer->lookahead) && !iswspace(lexer->lookahead) &&
-               lexer->lookahead != ':' && lexer->lookahead != 0xFF1A &&
-               lexer->lookahead != '!' && lexer->lookahead != '(' &&
-               lexer->lookahead != ')' && !lexer->eof(lexer)) {
-            if (lexer->lookahead == 'J') {
-                js++;
-            } else {
-                // Just overflow here; in this case we will never have just
-                // "JJ:".
-                js = 3;
-            }
-            lexer->advance(lexer, false);
-        }
-        lexer->mark_end(lexer);
-
-        if (lexer->lookahead == '(') {
-            js = 0;
-            lexer->advance(lexer, false);
-
-            if (lexer->lookahead == ')') {
-                return false;
-            }
-
-            while (!iswcntrl(lexer->lookahead) && lexer->lookahead != '(' &&
-                   lexer->lookahead != ')' && !lexer->eof(lexer)) {
-                lexer->advance(lexer, false);
-            }
-
-            if (lexer->lookahead != ')') {
-                return false;
-            }
-            lexer->advance(lexer, false);
-        }
-
-        if (lexer->lookahead == '!') {
-            js = 0;
-            lexer->advance(lexer, false);
-        }
-
-        if (js == 2 ||
-            (lexer->lookahead != ':' && lexer->lookahead != 0xFF1A)) {
-            return false;
-        }
-
-        lexer->advance(lexer, false);
-
-        return lexer->lookahead != '\r' && lexer->lookahead != '\n';
-    }
-
-    if (valid_symbols[CHANGE_ID] || valid_symbols[DIFF_SUMMARY]) {
-        const char *comment_prefix = "JJ: ";
+    if (valid_symbols[CHANGE_ID] || valid_symbols[DIFF_SUMMARY] ||
+        valid_symbols[JJ]) {
+        const char *comment_prefix = "JJ:";
         int prefix_len = strlen(comment_prefix);
         int idx = 0;
 
@@ -101,7 +47,45 @@ bool tree_sitter_jjdescription_external_scanner_scan(
         }
 
         if (idx != prefix_len) {
-            return false;
+            if (idx > 0) {
+                goto prefix2;
+            }
+
+            goto prefix;
+        }
+
+        lexer->mark_end(lexer);
+        lexer->result_symbol = JJ;
+    }
+
+    if (valid_symbols[CHANGE_ID] || valid_symbols[DIFF_SUMMARY] ||
+        valid_symbols[IGNORE_REST]) {
+        if (lexer->lookahead == ' ') {
+            lexer->advance(lexer, false);
+        } else {
+            return true;
+        }
+    }
+
+    if (valid_symbols[IGNORE_REST]) {
+        const char *generated_string = "ignore-rest";
+        int gen_str_len = strlen(generated_string);
+        int idx = 0;
+
+        while (idx < gen_str_len && lexer->lookahead == generated_string[idx] &&
+               !lexer->eof(lexer)) {
+            lexer->advance(lexer, false);
+            idx++;
+        }
+
+        if (idx == gen_str_len &&
+            (lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+             lexer->eof(lexer))) {
+            lexer->result_symbol = IGNORE_REST;
+            lexer->mark_end(lexer);
+            return true;
+        } else if (idx > 0) {
+            return valid_symbols[JJ];
         }
     }
 
@@ -119,9 +103,10 @@ bool tree_sitter_jjdescription_external_scanner_scan(
         if (idx == gen_str_len && lexer->lookahead >= 'k' &&
             lexer->lookahead <= 'z') {
             lexer->result_symbol = CHANGE_ID;
+            lexer->mark_end(lexer);
             return true;
         } else if (idx > 0) {
-            return false;
+            return valid_symbols[JJ];
         }
     }
 
@@ -144,7 +129,7 @@ bool tree_sitter_jjdescription_external_scanner_scan(
              lexer->lookahead == 'R')) {
             lexer->advance(lexer, false);
         } else {
-            return false;
+            return valid_symbols[JJ];
         }
 
         if (lexer->lookahead == ' ') {
@@ -154,6 +139,62 @@ bool tree_sitter_jjdescription_external_scanner_scan(
                 return true;
             }
         }
+    }
+
+    if (valid_symbols[JJ]) {
+        return true;
+    }
+
+prefix:
+
+    if (valid_symbols[PREFIX_TYPE]) {
+        if (iswcntrl(lexer->lookahead) || iswspace(lexer->lookahead) ||
+            lexer->lookahead == ':' || lexer->lookahead == '!' ||
+            lexer->lookahead == 0xFF1A || lexer->eof(lexer)) {
+            return false;
+        }
+        lexer->advance(lexer, false);
+
+    prefix2:
+
+        while (!iswcntrl(lexer->lookahead) && !iswspace(lexer->lookahead) &&
+               lexer->lookahead != ':' && lexer->lookahead != 0xFF1A &&
+               lexer->lookahead != '!' && lexer->lookahead != '(' &&
+               lexer->lookahead != ')' && !lexer->eof(lexer)) {
+            lexer->advance(lexer, false);
+        }
+        lexer->mark_end(lexer);
+
+        if (lexer->lookahead == '(') {
+            lexer->advance(lexer, false);
+
+            if (lexer->lookahead == ')') {
+                return false;
+            }
+
+            while (!iswcntrl(lexer->lookahead) && lexer->lookahead != '(' &&
+                   lexer->lookahead != ')' && !lexer->eof(lexer)) {
+                lexer->advance(lexer, false);
+            }
+
+            if (lexer->lookahead != ')') {
+                return false;
+            }
+            lexer->advance(lexer, false);
+        }
+
+        if (lexer->lookahead == '!') {
+            lexer->advance(lexer, false);
+        }
+
+        if ((lexer->lookahead != ':' && lexer->lookahead != 0xFF1A)) {
+            return false;
+        }
+
+        lexer->advance(lexer, false);
+
+        lexer->result_symbol = PREFIX_TYPE;
+        return lexer->lookahead != '\r' && lexer->lookahead != '\n';
     }
 
     return false;
