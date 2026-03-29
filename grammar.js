@@ -9,11 +9,12 @@
 
 const NEWLINE = /\r?\n/;
 const ANYTHING = /[^\r\n]+/;
+const TEXT = /[^J\r\n].*|J[^J\r\n].*|JJ[^:\r\n].*|J|JJ/;
 
 module.exports = grammar({
   name: 'jjdescription',
 
-  extras: ($) => [NEWLINE, $.comment, $.generated_comment],
+  extras: (_) => [],
 
   externals: (
     $,
@@ -21,25 +22,41 @@ module.exports = grammar({
     $.type,
     $._change_id,
     $._diff_summary,
-    $._jj_prefix,
-    $._jj_ignore_rest,
     $._error_sentinel,
   ],
 
   rules: {
     source: ($) =>
       seq(
-        optional(seq($.subject, repeat($.body_line))),
+        repeat(choice(NEWLINE, $.comment, $.generated_comment)),
+        optional(
+          seq(
+            $.subject,
+            repeat(
+              choice($.body_line, NEWLINE, $.comment, $.generated_comment),
+            ),
+          ),
+        ),
         optional($.ignore_rest),
       ),
 
-    comment: ($) => seq($._jj_prefix, alias(/[^\r\n]*/, $.comment_content)),
+    comment: ($) =>
+      prec.right(
+        seq(
+          'JJ:',
+          optional(alias(ANYTHING, $.comment_content)),
+          optional(NEWLINE),
+        ),
+      ),
 
     subject: ($) =>
       prec.right(
-        choice(
-          seq($.prefix, optional(ANYTHING)),
-          ANYTHING,
+        seq(
+          choice(
+            seq($.prefix, optional(ANYTHING)),
+            TEXT,
+          ),
+          optional(NEWLINE),
         ),
       ),
 
@@ -53,10 +70,9 @@ module.exports = grammar({
 
     scope: (_) => /[^\r\n()]+/,
 
-    body_line: (_) => ANYTHING,
+    body_line: (_) => prec.right(seq(TEXT, optional(NEWLINE))),
 
-    ignore_rest: ($) =>
-      seq($._jj_ignore_rest, optional($.rest)),
+    ignore_rest: ($) => seq('JJ: ignore-rest', optional($.rest)),
 
     rest: (_) => /[\s\S]+/,
 
