@@ -13,28 +13,30 @@ const ANYTHING = /[^\r\n]+/;
 module.exports = grammar({
   name: 'jjdescription',
 
-  extras: ($) => [NEWLINE, $.comment],
+  extras: ($) => [NEWLINE, $.comment, $.generated_comment],
 
-  externals: ($) => [$.type, $._change_id, $._diff_summary, $._error_sentinel],
+  externals: (
+    $,
+  ) => [
+    $.type,
+    $._change_id,
+    $._diff_summary,
+    $._jj_prefix,
+    $._jj_ignore_rest,
+    $._error_sentinel,
+  ],
 
   rules: {
     source: ($) =>
       seq(
-        optional($.subject),
-        repeat(
-          choice(
-            $.body_line,
-            $.ignore_rest,
-            $.generated_comment,
-          ),
-        ),
+        optional(seq($.subject, repeat($.body_line))),
+        optional($.ignore_rest),
       ),
 
-    comment: (_) => token(seq('JJ:', optional(ANYTHING))),
+    comment: ($) => seq($._jj_prefix, alias(/[^\r\n]*/, $.comment_content)),
 
     subject: ($) =>
       prec.right(
-        1,
         choice(
           seq($.prefix, optional(ANYTHING)),
           ANYTHING,
@@ -54,7 +56,7 @@ module.exports = grammar({
     body_line: (_) => ANYTHING,
 
     ignore_rest: ($) =>
-      seq('JJ: ignore-rest', optional(seq(NEWLINE, optional($.rest)))),
+      seq($._jj_ignore_rest, optional($.rest)),
 
     rest: (_) => /[\s\S]+/,
 

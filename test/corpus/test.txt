@@ -10,7 +10,8 @@ JJ: This is a comment
 --------------------------------------------------------------------------------
 
 (source
-  (comment))
+  (comment
+    (comment_content)))
 
 ================================================================================
 Simple subject
@@ -18,11 +19,14 @@ Simple subject
 
 
 JJ: This is a comment
+JJ:
 
 A change
 --------------------------------------------------------------------------------
 
 (source
+  (comment
+    (comment_content))
   (comment)
   (subject))
 
@@ -43,7 +47,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject)
   (body_line)
   (body_line)
@@ -87,7 +92,8 @@ baz
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject)
   (body_line)
   (body_line)
@@ -108,7 +114,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject
     (prefix
       (type)
@@ -130,7 +137,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject
     (prefix
       (type)
@@ -152,7 +160,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject
     (prefix
       (type)))
@@ -173,7 +182,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject
     (prefix
       (type)))
@@ -194,7 +204,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject
     (prefix
       (type)
@@ -216,7 +227,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject
     (prefix
       (type)))
@@ -237,7 +249,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject)
   (body_line)
   (body_line)
@@ -256,7 +269,8 @@ above change.
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject
     (prefix
       (type)))
@@ -280,11 +294,13 @@ JJ:     C ./foo bar.txt
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject)
   (generated_comment
     (change_id))
-  (comment)
+  (comment
+    (comment_content))
   (generated_comment
     (filepath))
   (generated_comment
@@ -307,9 +323,35 @@ JJ: Cha    M grammar.js
 --------------------------------------------------------------------------------
 
 (source
-  (comment)
+  (comment
+    (comment_content))
   (subject)
-  (comment)
+  (comment
+    (comment_content))
   (body_line)
-  (comment)
-  (comment))
+  (comment
+    (comment_content))
+  (comment
+    (comment_content)))
+
+================================================================================
+Empty with generated comments
+================================================================================
+
+JJ: Fixes #
+
+JJ: Change ID: nlzluzsr
+JJ: This commit contains the following changes:
+JJ:     M test/corpus/test.txt
+
+--------------------------------------------------------------------------------
+
+(source
+  (comment
+    (comment_content))
+  (generated_comment
+    (change_id))
+  (comment
+    (comment_content))
+  (generated_comment
+    (filepath)))
