@@ -263,3 +263,53 @@ above change.
   (body_line)
   (body_line)
   (body_line))
+
+================================================================================
+Generated comments
+================================================================================
+
+JJ: Fixes #
+
+Foo
+
+JJ: Change ID: vspmyyyr
+JJ: This commit contains the following changes:
+JJ:     M grammar.js
+JJ:     C ./foo bar.txt
+
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject)
+  (generated_comment
+    (change_id))
+  (comment)
+  (generated_comment
+    (filepath))
+  (generated_comment
+    (filepath)))
+
+================================================================================
+Almost generated comments
+================================================================================
+
+JJ: Fixes #
+
+Foo
+
+JJ: Change ID: 
+
+JJJ:     M grammar.js
+JJ:     M  grammar.js
+JJ: Cha    M grammar.js
+
+--------------------------------------------------------------------------------
+
+(source
+  (comment)
+  (subject)
+  (comment)
+  (body_line)
+  (comment)
+  (comment))

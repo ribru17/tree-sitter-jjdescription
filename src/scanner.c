@@ -1,7 +1,8 @@
+#include <string.h>
 #include <tree_sitter/parser.h>
 #include <wctype.h>
 
-enum TokenType { PREFIX_TYPE, ERROR_SENTINEL };
+enum TokenType { PREFIX_TYPE, CHANGE_ID, DIFF_SUMMARY, ERROR_SENTINEL };
 
 void *tree_sitter_jjdescription_external_scanner_create() {
     return NULL;
@@ -78,13 +79,81 @@ bool tree_sitter_jjdescription_external_scanner_scan(
             lexer->advance(lexer, false);
         }
 
-        if (js == 2 || (lexer->lookahead != ':' && lexer->lookahead != 0xFF1A)) {
+        if (js == 2 ||
+            (lexer->lookahead != ':' && lexer->lookahead != 0xFF1A)) {
             return false;
         }
 
         lexer->advance(lexer, false);
 
         return lexer->lookahead != '\r' && lexer->lookahead != '\n';
+    }
+
+    if (valid_symbols[CHANGE_ID] || valid_symbols[DIFF_SUMMARY]) {
+        const char *comment_prefix = "JJ: ";
+        int prefix_len = strlen(comment_prefix);
+        int idx = 0;
+
+        while (idx < prefix_len && lexer->lookahead == comment_prefix[idx] &&
+               !lexer->eof(lexer)) {
+            lexer->advance(lexer, false);
+            idx++;
+        }
+
+        if (idx != prefix_len) {
+            return false;
+        }
+    }
+
+    if (valid_symbols[CHANGE_ID]) {
+        const char *generated_string = "Change ID: ";
+        int gen_str_len = strlen(generated_string);
+        int idx = 0;
+
+        while (idx < gen_str_len && lexer->lookahead == generated_string[idx] &&
+               !lexer->eof(lexer)) {
+            lexer->advance(lexer, false);
+            idx++;
+        }
+
+        if (idx == gen_str_len && lexer->lookahead >= 'k' &&
+            lexer->lookahead <= 'z') {
+            lexer->result_symbol = CHANGE_ID;
+            return true;
+        } else if (idx > 0) {
+            return false;
+        }
+    }
+
+    if (valid_symbols[DIFF_SUMMARY]) {
+        const char *generated_prefix = "    ";
+        int gen_str_len = strlen(generated_prefix);
+        int idx = 0;
+
+        while (idx < gen_str_len && lexer->lookahead == generated_prefix[idx] &&
+               !lexer->eof(lexer)) {
+            lexer->advance(lexer, false);
+            idx++;
+        }
+
+        lexer->mark_end(lexer);
+
+        if (idx == gen_str_len &&
+            (lexer->lookahead == 'A' || lexer->lookahead == 'M' ||
+             lexer->lookahead == 'D' || lexer->lookahead == 'C' ||
+             lexer->lookahead == 'R')) {
+            lexer->advance(lexer, false);
+        } else {
+            return false;
+        }
+
+        if (lexer->lookahead == ' ') {
+            lexer->advance(lexer, false);
+            if (!iswspace(lexer->lookahead) && !lexer->eof(lexer)) {
+                lexer->result_symbol = DIFF_SUMMARY;
+                return true;
+            }
+        }
     }
 
     return false;

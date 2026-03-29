@@ -5,6 +5,30 @@
     "fields": {}
   },
   {
+    "type": "filepath",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "generated_comment",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "change_id",
+          "named": true
+        },
+        {
+          "type": "filepath",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "ignore_rest",
     "named": true,
     "fields": {},
@@ -52,6 +76,10 @@
           "named": true
         },
         {
+          "type": "generated_comment",
+          "named": true
+        },
+        {
           "type": "ignore_rest",
           "named": true
         },
@@ -94,8 +122,32 @@
     "named": false
   },
   {
+    "type": "A",
+    "named": false
+  },
+  {
+    "type": "C",
+    "named": false
+  },
+  {
+    "type": "D",
+    "named": false
+  },
+  {
     "type": "JJ: ignore-rest",
     "named": false
+  },
+  {
+    "type": "M",
+    "named": false
+  },
+  {
+    "type": "R",
+    "named": false
+  },
+  {
+    "type": "change_id",
+    "named": true
   },
   {
     "type": "comment",

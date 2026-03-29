@@ -15,7 +15,8 @@ module.exports = grammar({
 
   extras: ($) => [NEWLINE, $.comment],
 
-  externals: ($) => [$.type, $._error_sentinel],
+  externals: ($) => [$.type, $._change_id, $._diff_summary, $._error_sentinel],
+  // externals: ($) => [$.type, $._error_sentinel],
 
   rules: {
     source: ($) =>
@@ -25,6 +26,7 @@ module.exports = grammar({
           choice(
             $.body_line,
             $.ignore_rest,
+            $.generated_comment,
           ),
         ),
       ),
@@ -56,5 +58,21 @@ module.exports = grammar({
       seq('JJ: ignore-rest', optional(seq(NEWLINE, optional($.rest)))),
 
     rest: (_) => /[\s\S]+/,
+
+    generated_comment: ($) =>
+      choice(
+        seq($._change_id, $.change_id, NEWLINE),
+        seq(
+          $._diff_summary,
+          choice('A', 'M', 'D', 'C', 'R'),
+          / /,
+          $.filepath,
+          NEWLINE,
+        ),
+      ),
+
+    change_id: (_) => /[k-z]+/,
+
+    filepath: (_) => ANYTHING,
   },
 });
