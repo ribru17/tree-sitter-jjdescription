@@ -3,7 +3,7 @@
 #include <string.h>
 #include <wctype.h>
 
-enum TokenType { PREFIX_TYPE, CHANGE_ID, DIFF_SUMMARY, ERROR_SENTINEL };
+enum TokenType { CHANGE_ID, DIFF_SUMMARY, ERROR_SENTINEL };
 
 void *tree_sitter_jjdescription_external_scanner_create() {
     return NULL;
@@ -95,54 +95,6 @@ bool tree_sitter_jjdescription_external_scanner_scan(
             }
         }
     }
-
-    // if (valid_symbols[PREFIX_TYPE]) {
-    //     if (iswcntrl(lexer->lookahead) || iswspace(lexer->lookahead) ||
-    //         lexer->lookahead == ':' || lexer->lookahead == '!' ||
-    //         lexer->lookahead == 0xFF1A || lexer->eof(lexer)) {
-    //         return false;
-    //     }
-    //     lexer->advance(lexer, false);
-    //
-    //     while (!iswcntrl(lexer->lookahead) && !iswspace(lexer->lookahead) &&
-    //            lexer->lookahead != ':' && lexer->lookahead != 0xFF1A &&
-    //            lexer->lookahead != '!' && lexer->lookahead != '(' &&
-    //            lexer->lookahead != ')' && !lexer->eof(lexer)) {
-    //         lexer->advance(lexer, false);
-    //     }
-    //     lexer->mark_end(lexer);
-    //
-    //     if (lexer->lookahead == '(') {
-    //         lexer->advance(lexer, false);
-    //
-    //         if (lexer->lookahead == ')') {
-    //             return false;
-    //         }
-    //
-    //         while (!iswcntrl(lexer->lookahead) && lexer->lookahead != '(' &&
-    //                lexer->lookahead != ')' && !lexer->eof(lexer)) {
-    //             lexer->advance(lexer, false);
-    //         }
-    //
-    //         if (lexer->lookahead != ')') {
-    //             return false;
-    //         }
-    //         lexer->advance(lexer, false);
-    //     }
-    //
-    //     if (lexer->lookahead == '!') {
-    //         lexer->advance(lexer, false);
-    //     }
-    //
-    //     if ((lexer->lookahead != ':' && lexer->lookahead != 0xFF1A)) {
-    //         return false;
-    //     }
-    //
-    //     lexer->advance(lexer, false);
-    //
-    //     lexer->result_symbol = PREFIX_TYPE;
-    //     return lexer->lookahead != '\r' && lexer->lookahead != '\n';
-    // }
 
     return false;
 }
