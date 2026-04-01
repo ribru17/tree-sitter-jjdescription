@@ -336,6 +336,7 @@ Almost generated comments
 ================================================================================
 
 JJ: Fixes #
+JJ:     Mttt
 
 Foo
 
@@ -349,6 +350,8 @@ JJ: Cha    M grammar.js
 --------------------------------------------------------------------------------
 
 (source
+  (comment
+    (comment_content))
   (comment
     (comment_content))
   (subject)

@@ -109,6 +109,8 @@ bool tree_sitter_jjdescription_external_scanner_scan(
                 return true;
             }
         }
+
+        return false;
     }
 
 subject:
