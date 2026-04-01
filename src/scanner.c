@@ -63,11 +63,18 @@ bool tree_sitter_jjdescription_external_scanner_scan(
             idx++;
         }
 
-        if (idx == gen_str_len && lexer->lookahead >= 'k' &&
-            lexer->lookahead <= 'z') {
-            lexer->result_symbol = CHANGE_ID;
+        if (idx == gen_str_len) {
+            if (lexer->lookahead < 'k' || lexer->lookahead > 'z') {
+                return false;
+            }
+
             lexer->mark_end(lexer);
-            return true;
+            while (lexer->lookahead >= 'k' && lexer->lookahead <= 'z') {
+                lexer->advance(lexer, false);
+            }
+
+            lexer->result_symbol = CHANGE_ID;
+            return lexer->lookahead == '\r' || lexer->lookahead == '\n' || lexer->eof(lexer);
         } else if (idx > 0) {
             return false;
         }
