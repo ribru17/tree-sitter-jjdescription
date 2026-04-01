@@ -181,7 +181,7 @@
           "members": [
             {
               "type": "PATTERN",
-              "value": "[ \\t\\f]*"
+              "value": "[ \\t\\f\\v]*"
             },
             {
               "type": "SYMBOL",
