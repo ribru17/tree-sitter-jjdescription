@@ -3,7 +3,7 @@
 #include <string.h>
 #include <wctype.h>
 
-enum TokenType { CHANGE_ID, DIFF_SUMMARY, ERROR_SENTINEL };
+enum TokenType { CHANGE_ID, DIFF_SUMMARY, SUBJECT, ERROR_SENTINEL };
 
 void *tree_sitter_jjdescription_external_scanner_create() {
     return NULL;
@@ -24,7 +24,7 @@ void tree_sitter_jjdescription_external_scanner_deserialize(void *p,
 
 bool tree_sitter_jjdescription_external_scanner_scan(
     void *payload, TSLexer *lexer, const bool *valid_symbols) {
-    if (valid_symbols[ERROR_SENTINEL]) {
+    if (valid_symbols[ERROR_SENTINEL] || lexer->get_column(lexer) != 0) {
         return false;
     }
 
@@ -40,7 +40,13 @@ bool tree_sitter_jjdescription_external_scanner_scan(
         }
 
         if (idx != prefix_len) {
-            return false;
+            if (idx == strlen("JJ:")) {
+                return false;
+            }
+            if (idx > 0) {
+                goto subject2;
+            }
+            goto subject;
         }
     }
 
@@ -94,6 +100,68 @@ bool tree_sitter_jjdescription_external_scanner_scan(
                 return true;
             }
         }
+    }
+
+subject:
+
+    if (valid_symbols[SUBJECT]) {
+        lexer->result_symbol = SUBJECT;
+
+        while (iswspace(lexer->lookahead) && lexer->lookahead != '\r' &&
+               lexer->lookahead != '\n' && !lexer->eof(lexer)) {
+            lexer->advance(lexer, false);
+        }
+
+        bool advanced = false;
+        while (iswalnum(lexer->lookahead) || lexer->lookahead == '_') {
+            lexer->advance(lexer, false);
+        subject2:
+            advanced = true;
+        }
+
+        if (!advanced) {
+            goto end;
+        }
+
+        if (lexer->lookahead == '(') {
+            if (lexer->lookahead == ')') {
+                goto end;
+            }
+            advanced = false;
+
+            while (lexer->lookahead != '\r' && lexer->lookahead != '\n' &&
+                   lexer->lookahead != ')' && !lexer->eof(lexer)) {
+                advanced = true;
+                lexer->advance(lexer, false);
+            }
+
+            if (!advanced) {
+                goto end;
+            }
+
+            if (lexer->lookahead != ')') {
+                goto end;
+            } else {
+                lexer->advance(lexer, false);
+            }
+        }
+
+        if (lexer->lookahead == '!') {
+            lexer->advance(lexer, false);
+        }
+
+        if (lexer->lookahead == ':' || lexer->lookahead == 0xFF1A) {
+            return false;
+        };
+
+    end:
+        while (lexer->lookahead != '\r' && lexer->lookahead != '\n' &&
+               !lexer->eof(lexer)) {
+            advanced = true;
+            lexer->advance(lexer, false);
+        }
+
+        return advanced;
     }
 
     return false;
