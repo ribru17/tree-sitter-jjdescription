@@ -340,6 +340,7 @@ JJ: Fixes #
 Foo
 
 JJ: Change ID: 
+JJ: Change ID: xyzfsx
 
 JJJ:     M grammar.js
 JJ:     M  grammar.js
@@ -351,6 +352,8 @@ JJ: Cha    M grammar.js
   (comment
     (comment_content))
   (subject)
+  (comment
+    (comment_content))
   (comment
     (comment_content))
   (body_line)
