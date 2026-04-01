@@ -1,5 +1,6 @@
 #include "tree_sitter/parser.h"
 
+#include <stdbool.h>
 #include <string.h>
 #include <wctype.h>
 
