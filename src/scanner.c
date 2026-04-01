@@ -28,6 +28,7 @@ bool tree_sitter_jjdescription_external_scanner_scan(
         return false;
     }
 
+    bool advanced = false;
     if (valid_symbols[CHANGE_ID] || valid_symbols[DIFF_SUMMARY]) {
         const char *comment_prefix = "JJ: ";
         int prefix_len = strlen(comment_prefix);
@@ -44,7 +45,8 @@ bool tree_sitter_jjdescription_external_scanner_scan(
                 return false;
             }
             if (idx > 0) {
-                goto subject2;
+                advanced = true;
+                goto subject_continued;
             }
             goto subject;
         }
@@ -103,31 +105,31 @@ bool tree_sitter_jjdescription_external_scanner_scan(
     }
 
 subject:
-
     if (valid_symbols[SUBJECT]) {
-        lexer->result_symbol = SUBJECT;
-
         while (iswspace(lexer->lookahead) && lexer->lookahead != '\r' &&
                lexer->lookahead != '\n' && !lexer->eof(lexer)) {
             lexer->advance(lexer, false);
-        }
-
-        bool advanced = false;
-        while (iswalnum(lexer->lookahead) || lexer->lookahead == '_') {
-            lexer->advance(lexer, false);
-        subject2:
             advanced = true;
         }
 
-        if (!advanced) {
-            goto end;
+        if (!iswalnum(lexer->lookahead) && lexer->lookahead != '_') {
+            goto subject_end;
         }
 
+    subject_continued:
+        while (iswalnum(lexer->lookahead) || lexer->lookahead == '_') {
+            lexer->advance(lexer, false);
+            advanced = true;
+        }
         if (lexer->lookahead == '(') {
             if (lexer->lookahead == ')') {
-                goto end;
+                goto subject_end;
             }
-            advanced = false;
+
+            if (lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+                lexer->lookahead == ')' || lexer->eof(lexer)) {
+                goto subject_end;
+            }
 
             while (lexer->lookahead != '\r' && lexer->lookahead != '\n' &&
                    lexer->lookahead != ')' && !lexer->eof(lexer)) {
@@ -135,18 +137,16 @@ subject:
                 lexer->advance(lexer, false);
             }
 
-            if (!advanced) {
-                goto end;
-            }
-
             if (lexer->lookahead != ')') {
-                goto end;
+                goto subject_end;
             } else {
+                advanced = true;
                 lexer->advance(lexer, false);
             }
         }
 
         if (lexer->lookahead == '!') {
+            advanced = true;
             lexer->advance(lexer, false);
         }
 
@@ -154,13 +154,14 @@ subject:
             return false;
         };
 
-    end:
+    subject_end:
         while (lexer->lookahead != '\r' && lexer->lookahead != '\n' &&
                !lexer->eof(lexer)) {
             advanced = true;
             lexer->advance(lexer, false);
         }
 
+        lexer->result_symbol = SUBJECT;
         return advanced;
     }
 
