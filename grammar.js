@@ -19,9 +19,9 @@ module.exports = grammar({
   externals: (
     $,
   ) => [
-    // $.type,
     $._change_id,
     $._diff_summary,
+    $._subject,
     $._error_sentinel,
   ],
 
@@ -45,7 +45,7 @@ module.exports = grammar({
         seq(
           'JJ:',
           optional(alias(ANYTHING, $.comment_content)),
-          NEWLINE,
+          optional(NEWLINE),
         ),
       ),
 
@@ -53,15 +53,17 @@ module.exports = grammar({
       prec.right(
         seq(
           choice(
-            seq($.prefix, optional(ANYTHING), NEWLINE),
-            /[^:\r\n(!\uff1a]+\r?\n/,
+            seq($.prefix, optional(ANYTHING)),
+            $._subject,
           ),
+          optional(NEWLINE),
         ),
       ),
 
     prefix: ($) =>
       choice(
         seq(
+          /[ \t\f]*/,
           $.type,
           optional(seq('(', $.scope, ')')),
           optional('!'),
