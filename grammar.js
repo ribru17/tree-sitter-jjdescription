@@ -63,7 +63,7 @@ module.exports = grammar({
     prefix: ($) =>
       choice(
         seq(
-          /[ \t\f]*/,
+          /[ \t\f\v]*/,
           $.type,
           optional(seq('(', $.scope, ')')),
           optional('!'),
@@ -77,7 +77,8 @@ module.exports = grammar({
 
     body_line: (_) => prec.right(seq(TEXT, optional(NEWLINE))),
 
-    ignore_rest: ($) => seq('JJ: ignore-rest', optional($.rest)),
+    ignore_rest: ($) =>
+      seq('JJ: ignore-rest', optional(seq(NEWLINE, optional($.rest)))),
 
     rest: (_) => /[\s\S]+/,
 
