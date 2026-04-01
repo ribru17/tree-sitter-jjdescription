@@ -74,7 +74,8 @@ bool tree_sitter_jjdescription_external_scanner_scan(
             }
 
             lexer->result_symbol = CHANGE_ID;
-            return lexer->lookahead == '\r' || lexer->lookahead == '\n' || lexer->eof(lexer);
+            return lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
+                   lexer->eof(lexer);
         } else if (idx > 0) {
             return false;
         }
@@ -104,7 +105,8 @@ bool tree_sitter_jjdescription_external_scanner_scan(
 
         if (lexer->lookahead == ' ') {
             lexer->advance(lexer, false);
-            if (!iswspace(lexer->lookahead) && !lexer->eof(lexer)) {
+            if (lexer->lookahead != '\r' && lexer->lookahead != '\n' &&
+                !lexer->eof(lexer)) {
                 lexer->result_symbol = DIFF_SUMMARY;
                 return true;
             }

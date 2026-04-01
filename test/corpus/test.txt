@@ -315,6 +315,7 @@ JJ: Change ID: vspmyyyr
 JJ: This commit contains the following changes:
 JJ:     M grammar.js
 JJ:     C ./foo bar.txt
+JJ:     D   foo.png
 
 --------------------------------------------------------------------------------
 
@@ -326,6 +327,8 @@ JJ:     C ./foo bar.txt
     (change_id))
   (comment
     (comment_content))
+  (generated_comment
+    (filepath))
   (generated_comment
     (filepath))
   (generated_comment
@@ -344,7 +347,6 @@ JJ: Change ID:
 JJ: Change ID: xyzfsx
 
 JJJ:     M grammar.js
-JJ:     M  grammar.js
 JJ: Cha    M grammar.js
 
 --------------------------------------------------------------------------------
@@ -360,8 +362,6 @@ JJ: Cha    M grammar.js
   (comment
     (comment_content))
   (body_line)
-  (comment
-    (comment_content))
   (comment
     (comment_content)))
 
