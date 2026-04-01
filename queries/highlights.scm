@@ -12,6 +12,9 @@
 
 (filepath) @string.special.path
 
+((rest) @comment
+  (#not-match? @comment "^diff"))
+
 "JJ: ignore-rest" @keyword.directive
 
 [
