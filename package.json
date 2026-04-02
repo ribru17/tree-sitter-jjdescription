@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-jjdescription",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tree-sitter parser for `jj desc` buffers.",
   "repository": "https://github.com/ribru17/tree-sitter-jjdescription",
   "license": "MIT",

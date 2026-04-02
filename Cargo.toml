@@ -1,7 +1,7 @@
 [package]
 name = "tree-sitter-jjdescription"
 description = "Tree-sitter parser for `jj desc` buffers."
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Riley Bruins <ribru17@gmail.com>"]
 license = "MIT"
 readme = "README.md"
