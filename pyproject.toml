@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tree-sitter-jjdescription"
 description = "Tree-sitter parser for `jj desc` buffers."
-version = "1.0.1"
+version = "1.0.3"
 keywords = ["incremental", "parsing", "tree-sitter", "jjdescription"]
 classifiers = [
   "Intended Audience :: Developers",
