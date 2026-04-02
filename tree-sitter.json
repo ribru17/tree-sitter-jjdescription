@@ -14,7 +14,7 @@
     }
   ],
   "metadata": {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "license": "MIT",
     "description": "Tree-sitter parser for `jj desc` buffers.",
     "authors": [

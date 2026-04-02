@@ -4,7 +4,7 @@ endif
 
 LANGUAGE_NAME := tree-sitter-jjdescription
 HOMEPAGE_URL := https://github.com/tree-sitter/tree-sitter-jjdescription
-VERSION := 1.0.1
+VERSION := 1.0.2
 
 # repository
 SRC_DIR := src
