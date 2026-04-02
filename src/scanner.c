@@ -134,9 +134,8 @@ subject:
             advanced = true;
         }
         if (lexer->lookahead == '(') {
-            if (lexer->lookahead == ')') {
-                goto subject_end;
-            }
+            lexer->advance(lexer, false);
+            advanced = true;
 
             if (lexer->lookahead == '\r' || lexer->lookahead == '\n' ||
                 lexer->lookahead == ')' || lexer->eof(lexer)) {
