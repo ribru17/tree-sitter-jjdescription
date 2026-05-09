@@ -2,6 +2,7 @@
   "name": "tree-sitter-jjdescription",
   "version": "1.0.3",
   "description": "Tree-sitter parser for `jj desc` buffers.",
+  "type": "module",
   "repository": "https://github.com/ribru17/tree-sitter-jjdescription",
   "license": "MIT",
   "author": {

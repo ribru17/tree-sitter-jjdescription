@@ -11,7 +11,7 @@ const NEWLINE = /\r?\n/;
 const ANYTHING = /[^\r\n]+/;
 const TEXT = /[^J\r\n].*|J[^J\r\n].*|JJ[^:\r\n].*|J|JJ/;
 
-module.exports = grammar({
+export default grammar({
   name: 'jjdescription',
 
   extras: (_) => [],
